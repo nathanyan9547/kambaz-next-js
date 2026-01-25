@@ -20,12 +20,12 @@ export default function Dashboard() {
         </div>
 
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/4550" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 2 name here </h5>
+              <h5> CS4550 Web Development </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about web development
               </p>
               <button> Go </button>
             </div>
@@ -33,12 +33,12 @@ export default function Dashboard() {
         </div>
         
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/4530" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 3 name here </h5>
+              <h5> CS4530 Software Engineering </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about software engineering
               </p>
               <button> Go </button>
             </div>
@@ -46,12 +46,12 @@ export default function Dashboard() {
         </div>
         
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/2400" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 4 name here </h5>
+              <h5> ARTG2400 Interaction Design </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about interaction design
               </p>
               <button> Go </button>
             </div>
@@ -59,12 +59,12 @@ export default function Dashboard() {
         </div>
         
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/3500" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 5 name here </h5>
+              <h5> CS3500 Object Oriented Design </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about object oriented design
               </p>
               <button> Go </button>
             </div>
@@ -72,12 +72,12 @@ export default function Dashboard() {
         </div>
         
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/4400" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 6 name here </h5>
+              <h5> DS4400 Machine Learning I </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about machine learning part 1
               </p>
               <button> Go </button>
             </div>
@@ -85,12 +85,12 @@ export default function Dashboard() {
         </div>
         
         <div className="wd-dashboard-course">
-          <Link href="/courses/2345" className="wd-dashboard-course-link">
+          <Link href="/courses/3000" className="wd-dashboard-course-link">
             <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
             <div>
-              <h5> CS2345 Course 7 name here </h5>
+              <h5> CS3000 Algorithms and Data Structures </h5>
               <p className="wd-dashboard-course-title">
-                random role stuff
+                Learn about algorithms and data structures
               </p>
               <button> Go </button>
             </div>
