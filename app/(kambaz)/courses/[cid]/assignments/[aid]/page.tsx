@@ -1,18 +1,27 @@
 "use client"
+import { useParams } from "next/navigation";
+import * as db from "../../../../database";
 import { Button, Col, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams();
+  const assignment = db.assignments.find((a) => a._id === aid && a.course === cid);
+  
+  if (!assignment) {
+    return <div>Assignment not found.</div>
+  }
+
   return (
     <div id="wd-assignments-editor">
       <Form id="wd-assignments-editor">
         <Form.Group >
-          <Form.Label htmlFor="wd-name">Assignment Name</Form.Label>
-          <Form.Control id="wd-name" defaultValue="A1"/>
+          <Form.Label htmlFor="wd-name">Assignment Title</Form.Label>
+          <Form.Control id="wd-name" defaultValue={assignment.title || "A1"}/>
         </Form.Group><br/>
         
         <Form.Group>
-          <Form.Control id="wd-description" as="textarea" cols={45} rows={12} defaultValue={
+          <Form.Control id="wd-description" as="textarea" cols={45} rows={12} defaultValue={assignment.desc ||
 `The assignment is available online.
 
 Submit a link to the landing page of your Web application running on Netlify.
@@ -31,7 +40,7 @@ The Kanbas application should include a link back to the landing page.`
         <Row className="mb-3 align-items-center">
           <Form.Label column md={3} className="text-end" htmlFor="wd-points">Points</Form.Label>
           <Col md={9}>
-            <Form.Control type="number" id="wd-points" defaultValue={100} />
+            <Form.Control type="number" id="wd-points" defaultValue={assignment.points || 100} />
           </Col>
         </Row>
         
@@ -96,20 +105,20 @@ The Kanbas application should include a link back to the landing page.`
               <Form.Label htmlFor="wd-due-date" className="fw-bold">
                 Due
               </Form.Label>
-              <Form.Control type="date" id="wd-due-date" defaultValue="2024-05-13" /> <br/>
+              <Form.Control type="date" id="wd-due-date" defaultValue={assignment.due} /> <br/>
               <Row>
                 <Col md={6}>
                   <Form.Label htmlFor="wd-available-from" className="fw-bold">
                     Available from
                   </Form.Label>
-                  <Form.Control type="date" id="wd-available-from" defaultValue="2024-05-06" />
+                  <Form.Control type="date" id="wd-available-from" defaultValue={assignment.from} />
                 </Col>
                 
                 <Col md={6}>
                   <Form.Label htmlFor="wd-available-until" className="fw-bold">
                     Until
                   </Form.Label>
-                  <Form.Control type="date" id="wd-available-until" defaultValue="2024-05-20" />
+                  <Form.Control type="date" id="wd-available-until" defaultValue={assignment.until} />
                 </Col>
               </Row>
             </Form.Group>
@@ -117,7 +126,7 @@ The Kanbas application should include a link back to the landing page.`
         </Row>
       </Form> <hr />
   
-      <Button variant="danger" className="float-end">Save</Button>
-      <Button variant="secondary" className="me-2 float-end">Cancel</Button>
+      <Button variant="danger" className="float-end" href={`/courses/${cid}/assignments`}>Save</Button>
+      <Button variant="secondary" className="me-2 float-end" href={`/courses/${cid}/assignments`}>Cancel</Button>
     </div>
 );}

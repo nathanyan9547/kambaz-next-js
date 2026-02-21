@@ -1,0 +1,77 @@
+[
+  {
+    "_id": "A101",
+    "title": "Propulsion Assignment",
+    "desc": "This assignment asks you to use your knowledge of rocket propulsion from our slides and lectures to calculate the propulsion value.",
+    "from": "2026-05-06",
+    "due": "2026-05-13",
+    "until": "2026-05-20",
+    "points": 100,
+    "course":"RS101"
+  },
+  {
+    "_id": "A102",
+    "title": "Combustion Analysis",
+    "desc": "This assignment asks you to use your knowledge of combustion to analyze the scenario provided and describe your reasoning as to why the answer is what you put down.",
+    "from": "2026-05-13",
+    "due": "2026-05-20",
+    "points": 100,
+    "course": "RS101"
+  },
+  {
+    "_id": "A103",
+    "title": "Nozzle Design Project",
+    "from": "2026-05-20",
+    "due": "2026-05-27",
+    "points": 80,
+    "course": "RS101"
+  },
+  {
+    "_id": "A201",
+    "title": "Aerodynamics Quiz",
+    "from": "2026-05-06",
+    "due": "2026-05-13",
+    "points": 100,
+    "course": "RS102"
+  },
+  {
+    "_id": "A202",
+    "title": "Flow Analysis",
+    "from": "2026-05-13",
+    "due": "2026-05-20",
+    "points": 100,
+    "course": "RS102"
+  },
+  {
+    "_id": "A203",
+    "title": "Heating Analysis",
+    "from": "2026-05-20",
+    "due": "2026-05-27",
+    "points": 100,
+    "course": "RS102"
+  },
+  {
+    "_id": "A301",
+    "title": "Structural Design Task",
+    "from": "2026-05-06",
+    "due": "2026-05-13",
+    "points": 100,
+    "course": "RS103"
+  },
+  {
+    "_id": "A302",
+    "title": "Orbital Calculations",
+    "from": "2026-05-13",
+    "due": "2026-05-20",
+    "points": 100,
+    "course": "RS103"
+  },
+  {
+    "_id": "A303",
+    "title": "Systems Engineering Exam",
+    "from": "2026-05-20",
+    "due": "2026-05-27",
+    "points": 100,
+    "course": "RS103"
+  }
+]
