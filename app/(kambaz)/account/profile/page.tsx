@@ -1,42 +1,70 @@
-import { Button, Form, FormControl } from "react-bootstrap";
+"use client"
+import { redirect } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "../reducer";
+import { RootState } from "../../store";
+import { Button, FormControl } from "react-bootstrap";
+
+type User = {
+  _id: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  dob?: string;
+  role: string;
+};
 
 export default function Profile() {
+  const [profile, setProfile] = useState<User | null>(null);
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const signout = () => {
+    dispatch(setCurrentUser(null));
+    redirect("/account/signin");
+  };
+  useEffect(() => {
+    if (!currentUser) return redirect("/account/signin");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProfile(currentUser);
+  }, [currentUser]);
+
   return (
-    <div id="wd-signin-screen">
+    <div className="wd-profile-screen">
       <h1>Profile</h1>
-      <FormControl id="wd-username"
-             placeholder="username"
-             defaultValue="alice"
-             className="mb-2"/>
-      <FormControl id="wd-password"
-             placeholder="password"
-             defaultValue="123"
-             className="mb-2"/>
-      <FormControl id="wd-firstname"
-             placeholder="First Name"
-             defaultValue="Alice"
-             className="mb-2"/>
-      <FormControl id="wd-lastname"
-             placeholder="Last Name"
-             defaultValue="Wonderland"
-             className="mb-2"/>
-      <FormControl id="wd-dob"
-             placeholder="mm/dd/yyyy" type="date"
-             className="mb-2"/>
-      <FormControl id="wd-email"
-             placeholder="username@gmail.com" type="email"
-             defaultValue="alice@wonderland.com"
-             className="mb-2"/>
-      <Form.Select id="wd-role" defaultValue="User">
-        <option value="USER">User</option>
-        <option value="ADMIN">Admin</option>
-        <option value="FACULTY">Faculty</option>
-        <option value="STUDENT">Student</option>
-      </Form.Select> <br/>
-      <Button id="wd-signout-btn"
-            href="/account/signin"
-            variant="danger"
-            className="btn btn-primary w-100 mb-2">
-            Signout </Button>
+      {profile && (
+        <div>
+          <FormControl id="wd-username" className="mb-2"
+            defaultValue={profile.username}
+            onChange={(e) => setProfile({ ...profile, username: e.target.value }) } />
+          <FormControl id="wd-password" className="mb-2"
+            defaultValue={profile.password}
+            onChange={(e) => setProfile({ ...profile, password: e.target.value }) } />
+          <FormControl id="wd-firstname" className="mb-2"
+            defaultValue={profile.firstName}
+            onChange={(e) => setProfile({ ...profile, firstName: e.target.value }) } />
+          <FormControl id="wd-lastname" className="mb-2"
+            defaultValue={profile.lastName}
+            onChange={(e) => setProfile({ ...profile, lastName: e.target.value }) } />
+          <FormControl id="wd-dob" className="mb-2" type="date"
+            defaultValue={profile.dob}
+            onChange={(e) => setProfile({ ...profile, dob: e.target.value })} />
+          <FormControl id="wd-email" className="mb-2"
+            defaultValue={profile.email}
+            onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
+          <select className="form-control mb-2" id="wd-role" 
+            onChange={(e) => setProfile({ ...profile, role: e.target.value })} >
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="FACULTY">Faculty</option>{" "}
+            <option value="STUDENT">Student</option>
+          </select>
+          <Button onClick={signout} className="w-100 mb-2 btn-danger" id="wd-signout-btn">
+            Sign out
+          </Button>
+        </div>
+      )}
     </div>
 );}

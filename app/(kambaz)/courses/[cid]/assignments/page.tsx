@@ -1,35 +1,47 @@
-"use client"
+"use client";
+import { useState } from "react";
 import { useParams } from "next/navigation";
-import * as db from "../../../database";
-import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { ListGroup, ListGroupItem, Button, Modal } from "react-bootstrap";
 import AssignmentControls from "./assignmentControls";
 import { BsGripVertical } from "react-icons/bs";
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown, FaTrash } from "react-icons/fa";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import AControlButtons from "./AControlButtons";
 import { MdAssignment } from "react-icons/md";
 import Link from "next/link";
-
-type Assignment = {
-  _id: string;
-  title: string;
-  from: string;
-  due: string;
-  points: number;
-  course: string;
-};
+import { useSelector, useDispatch } from "react-redux";
+import { deleteAssignment } from "./reducer";
+import { RootState } from "../../../store";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments: Assignment[] = db.assignments;
+  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
+  const dispatch = useDispatch();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleDeleteClick = (id: string) => {
+    setSelectedId(id);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedId) dispatch(deleteAssignment(selectedId));
+    setShowConfirm(false);
+    setSelectedId(null);
+  };
+
   return (
     <div id="wd-assignments">
       <AssignmentControls /><br /><br /><br /><br />
-        
+
       <ListGroup className="rounded-0" id="wd-modules">
         <ListGroupItem className="wd-module p-0 mb-5 fs-5 border-gray">
           <div className="wd-assignments-title p-3 ps-2 bg-secondary">
-            <BsGripVertical className="me-2 fs-3" /> <FaCaretDown className="me-2 fs-5" /> <span className="fw-bold"> ASSIGNMENTS </span> <AssignmentControlButtons />
+            <BsGripVertical className="me-2 fs-3" />
+            <FaCaretDown className="me-2 fs-5" />
+            <span className="fw-bold"> ASSIGNMENTS </span>
+            <AssignmentControlButtons />
           </div>
           {assignments
             .filter((assignment) => assignment.course === cid)
@@ -55,13 +67,28 @@ export default function Assignments() {
                       <span className="m-2"> | </span> {assignment.points} pts
                     </div>
                   </div>
-                  <AControlButtons />  
+                  <FaTrash className="text-danger me-3 fs-5"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleDeleteClick(assignment._id)} />
+                  <AControlButtons />
                 </div>
               </ListGroupItem>
             </ListGroup>
           ))}
         </ListGroupItem>
       </ListGroup>
+
+      <Modal show={showConfirm} onHide={() => setShowConfirm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Assignment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this assignment?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirm(false)}>No</Button>
+          <Button variant="danger" onClick={handleConfirmDelete}
+                  id="wd-confirm-delete-assignment">Yes</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
