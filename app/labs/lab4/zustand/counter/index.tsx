@@ -1,5 +1,5 @@
 "use client";
-import { useCounterStore } from "./store";
+import { useCounterStore } from "./useCounterStore";
 
 export default function ZustandCounter() {
  const { count, increase, decrease, setCount, reset } = useCounterStore(
