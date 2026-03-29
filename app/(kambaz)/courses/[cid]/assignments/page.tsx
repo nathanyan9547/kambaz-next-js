@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { ListGroup, ListGroupItem, Button, Modal } from "react-bootstrap";
 import AssignmentControls from "./assignmentControls";
@@ -10,23 +10,48 @@ import AControlButtons from "./AControlButtons";
 import { MdAssignment } from "react-icons/md";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { setAssignments } from "./reducer";
 import { RootState } from "../../../store";
+import * as client from "../../client";
+
+type Assignment = {
+  _id: string;
+  title: string;
+  desc?: string;
+  from: string;
+  due: string;
+  until?: string;
+  points: number;
+  course: string;
+};
 
 export default function Assignments() {
-  const { cid } = useParams();
+  const { cid } = useParams() as { cid: string };
   const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
   const dispatch = useDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const onRemoveAssignment = async (assignmentId: string) => {
+    await client.deleteAssignment(assignmentId);
+    dispatch(setAssignments(assignments.filter((a: Assignment) => a._id !== assignmentId)));
+  };
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      const data = await client.findAssignmentsForCourse(cid);
+      dispatch(setAssignments(data));
+    };
+    fetchAssignments();
+  }, [cid, dispatch]);
 
   const handleDeleteClick = (id: string) => {
     setSelectedId(id);
     setShowConfirm(true);
   };
 
-  const handleConfirmDelete = () => {
-    if (selectedId) dispatch(deleteAssignment(selectedId));
+  const handleConfirmDelete = async () => {
+    if (selectedId) await onRemoveAssignment(selectedId);
     setShowConfirm(false);
     setSelectedId(null);
   };
@@ -43,9 +68,7 @@ export default function Assignments() {
             <span className="fw-bold"> ASSIGNMENTS </span>
             <AssignmentControlButtons />
           </div>
-          {assignments
-            .filter((assignment) => assignment.course === cid)
-            .map((assignment) => (
+          {assignments.map((assignment) => (
             <ListGroup key={assignment._id} className="wd-assignment-list rounded-0">
               <ListGroupItem className="wd-assignment-list-item p-3 ps-1">
                 <div className="d-flex align-items-center">

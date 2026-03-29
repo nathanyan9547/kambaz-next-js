@@ -5,10 +5,11 @@ import ModulesControls from "./modulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
-import { useState } from "react";
-import { addModule, editModule, updateModule, deleteModule } from "./reducer";
+import { useState, useEffect } from "react";
+import { setModules, editModule, updateModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
+import * as client from "../../client";
 
 type Module = {
   _id: string;
@@ -31,6 +32,32 @@ export default function Modules() {
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: RootState) => state.modulesReducer);
   const dispatch = useDispatch();
+  
+  const onUpdateModule = async (module: Module) => {
+    await client.updateModule(module);
+    const newModules = modules.map((m: Module) => m._id === module._id ? module : m );
+    dispatch(setModules(newModules));
+  };
+  
+  const onRemoveModule = async (moduleId: string) => {
+    await client.deleteModule(moduleId);
+    dispatch(setModules(modules.filter((m: Module) => m._id !== moduleId)));
+  };
+
+  const onCreateModuleForCourse = async () => {
+    if (!cid) return;
+    const newModule = { name: moduleName, course: cid };
+    const created = await client.createModuleForCourse(cid as string, newModule);
+    dispatch(setModules([...modules, created]));
+  };
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      const modules = await client.findModulesForCourse(cid as string);
+      dispatch(setModules(modules));
+    };
+    fetchModules();
+  }, [cid, dispatch]);
 
   return (
     <div>
@@ -38,16 +65,11 @@ export default function Modules() {
         <ModulesControls
           moduleName={moduleName}
           setModuleName={setModuleName}
-          addModule={() => {
-            dispatch(addModule({ name: moduleName, course: cid as string }));
-            setModuleName("");
-          }}
+          addModule={onCreateModuleForCourse}
         /><br /><br /><br /><br />
 
         <ListGroup className="rounded-0" id="wd-modules">
-          {modules
-            .filter((module: Module) => module.course === cid)
-            .map((module: Module) => (
+          {modules.map((module: Module) => (
               <ListGroupItem key={module._id} className="wd-module p-0 mb-5 fs-5 border-gray">
                 <div className="wd-title p-3 ps-2 bg-secondary">
                   <BsGripVertical className="me-2 fs-3" />
@@ -60,14 +82,14 @@ export default function Modules() {
                       }
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          dispatch(updateModule({ ...module, editing: false }));
+                          onUpdateModule({ ...module, editing: false });
                         }
                       }}
                     />
                   )}
                   <ModuleControlButtons
                     moduleId={module._id}
-                    deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
+                    deleteModule={(moduleId) => onRemoveModule(moduleId)}
                     editModule={(moduleId) => dispatch(editModule(moduleId))}
                   />
                 </div>
