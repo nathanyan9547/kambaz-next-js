@@ -10,20 +10,36 @@ export default function AccountNavigation() {
   const pathname = usePathname();
   return (
     <div id="wd-account-navigation">
-      <Nav variant="pills">
+      <Nav variant="pills" className="flex-column">
         {links.map((link) => (
           <NavItem key={link} className="wd list-group fs-5 rounded-0">
             <NavLink
               as={Link}
               href={link}
               active={pathname.endsWith(link)}
-              className={`list-group-item border-0  ${
+              className={`list-group-item border-0 ${
                 pathname.endsWith(link) ? "active" : "text-danger"
               }`}
-              style={{ textTransform: 'capitalize'
-            }}>
-              {link} </NavLink> </NavItem>
+              style={{ textTransform: "capitalize" }}
+            >
+              {link}
+            </NavLink>
+          </NavItem>
         ))}
+        {currentUser && currentUser.role === "ADMIN" && (
+          <NavItem className="wd list-group fs-5 rounded-0">
+            <NavLink
+              as={Link}
+              href="/account/users"
+              active={pathname.endsWith("users")}
+              className={`list-group-item border-0 ${
+                pathname.endsWith("users") ? "active" : "text-danger"
+              }`}
+            >
+              Users
+            </NavLink>
+          </NavItem>
+        )}
       </Nav>
     </div>
   );
