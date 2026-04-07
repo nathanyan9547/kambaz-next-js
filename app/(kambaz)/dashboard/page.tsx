@@ -2,9 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, FormControl, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { setCourses } from "../courses/reducer";
-import { setEnrollments } from "../enrollments/reducer";
+import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import * as client from "../courses/client";
 
@@ -22,78 +20,74 @@ type Course = {
 };
 
 export default function Dashboard() {
-  const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
-  const dispatch = useDispatch();
+  const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [allCourses, setAllCourses] = useState<Course[]>([]);
+  const [enrolledIds, setEnrolledIds] = useState<string[]>([]);
   const [showAllCourses, setShowAllCourses] = useState(false);
   const [course, setCourse] = useState<Course>({
     _id: "0", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15",
     image: "/images/reactjs.jpg", description: "New Description"
   });
-  
+
+  const fetchData = async () => {
+    try {
+      const enrolled = await client.findMyCourses();
+      setMyCourses(enrolled);
+      setEnrolledIds(enrolled.map((c: Course) => c._id));
+      const all = await client.fetchAllCourses();
+      setAllCourses(all);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const onAddNewCourse = async () => {
-    const newCourse = await client.createCourse(course);
-    dispatch(setCourses([ ...courses, newCourse ]));
-    setAllCourses([...allCourses, newCourse]);
+    await client.createCourse(course);
+    await fetchData();
   };
 
   const onDeleteCourse = async (courseId: string) => {
     await client.deleteCourse(courseId);
-    dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
-    setAllCourses(allCourses.filter((course) => course._id !== courseId));
+    await fetchData();
   };
 
   const onUpdateCourse = async () => {
     await client.updateCourse(course);
-    dispatch(setCourses(courses.map((c) => c._id === course._id ? course : c )));
-    setAllCourses(allCourses.map((c) => c._id === course._id ? course : c));
+    await fetchData();
   };
 
   const onEnroll = async (courseId: string) => {
-    await client.enrollInCourse(courseId);
-    const updatedEnrollments = await client.fetchMyEnrollments();
-    dispatch(setEnrollments(updatedEnrollments));
-    const updated = await client.findMyCourses();
-    dispatch(setCourses(updated));
+    if (!currentUser) return;
+    await client.enrollIntoCourse(currentUser._id, courseId);
+    await fetchData();
   };
 
-
   const onUnenroll = async (courseId: string) => {
-    await client.unenrollFromCourse(courseId);
-    const updatedEnrollments = await client.fetchMyEnrollments();
-    dispatch(setEnrollments(updatedEnrollments));
-    const updated = await client.findMyCourses();
-    dispatch(setCourses(updated));
+    if (!currentUser) return;
+    await client.unenrollFromCourse(currentUser._id, courseId);
+    await fetchData();
   };
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetch = async () => {
       try {
-        const courses = await client.findMyCourses();
-        dispatch(setCourses(courses));
+        const enrolled = await client.findMyCourses();
+        setMyCourses(enrolled);
+        setEnrolledIds(enrolled.map((c: Course) => c._id));
         const all = await client.fetchAllCourses();
         setAllCourses(all);
-        const myEnrollments = await client.fetchMyEnrollments();
-        dispatch(setEnrollments(myEnrollments));
       } catch (error) {
         console.error(error);
       }
     };
-    fetchCourses();
-  }, [currentUser, dispatch]);
-
+    fetch();
+  }, [currentUser]);
 
   const hasPerms = currentUser?.role === "ADMIN" || currentUser?.role === "FACULTY"; // So we can create restrictions if they are a student
-
-  const isEnrolled = (courseId: string) =>
-    enrollments.some((e) => e.user === currentUser?._id && e.course === courseId);
-
-  const displayedCourses = showAllCourses
-    ? allCourses
-    : courses
+  const isEnrolled = (courseId: string) => enrolledIds.includes(courseId);
+  const displayedCourses = showAllCourses ? allCourses : myCourses;
 
   return (
     <div id="wd-dashboard">
