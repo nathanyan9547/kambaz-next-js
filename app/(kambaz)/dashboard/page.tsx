@@ -143,7 +143,7 @@ export default function Dashboard() {
                     <Button variant="secondary" disabled>Go</Button> // not enrolled, can't enter course
                   )}
 
-                  {currentUser && (
+                  {showAllCourses && currentUser && (
                     isEnrolled(course._id) ? (
                       <Button variant="danger" className="float-end"
                               id="wd-unenroll-click"
